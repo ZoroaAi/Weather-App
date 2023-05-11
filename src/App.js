@@ -1,4 +1,3 @@
-import './css/App.scss';
 import Weather from "./Weather";
 
 function App() {
