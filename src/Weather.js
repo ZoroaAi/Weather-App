@@ -3,13 +3,11 @@ import React, { useState } from 'react';
 function Weather() {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
-
-  console.log(process.env.API_KEY);
+  const [error, setError] = useState(null);
 
   const fetchWeather = async () => {
-    const api_key = "043c8a285ac385e52e215dca7ffbcca0";
-    const url =`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`;
-    console.log('URL:', url);
+    // const api_key = "043c8a285ac385e52e215dca7ffbcca0";
+    const url =`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.REACT_APP_API_KEY}`;
     try {
         const response = await fetch(url);
       if (!response.ok) {
@@ -18,11 +16,13 @@ function Weather() {
       const data = await response.json();
       setWeather(data);
     } catch (error) {
-      console.error('Error fetching weather data:', error);
+      setError(error.message);
     }
   }
   
-  
+  const toCelsius = (temp) => {
+    return (temp - 273.15).toFixed(2);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,23 +30,24 @@ function Weather() {
   }
 
   return (
-    <div>
-      <h1>Weather App</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Enter city name:
+    <div className='weather-wrapper'>
+      <div class="weather-form">
+        <h1>Weather App</h1>
+        <form onSubmit={handleSubmit}>
+          <label>Enter City Name: </label>
           <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
-        </label>
-        <button type="submit">Get Weather</button>
-      </form>
+          <button type="submit">Get Weather</button>
+        </form>
+      </div>
       {weather && weather.main && (
-        <div>
-          <h2>{weather.name}</h2>
-          <p>Temperature: {weather.main.temp} K</p>
-          <p>Humidity: {weather.main.humidity}</p>
-          <p>Weather: {weather.weather[0].main}</p>
+        <div className='display-weather'>
+          <h2 className='display-name'>{weather.name}</h2>
+          <p className='display-temp'>Temperature: {toCelsius(weather.main.temp)} &#8451;</p>
+          <p className='display-humidity'>Humidity: {weather.main.humidity}</p>
+          <p className='display-weather-type'>Weather: {weather.weather[0].main}</p>
         </div>
       )}
+      {error && <p>{error}</p>}
     </div>
   );
 }

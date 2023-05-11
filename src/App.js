@@ -1,5 +1,4 @@
-import logo from './images/logo.svg';
-import './css/App.css';
+import './css/App.scss';
 import Weather from "./Weather";
 
 function App() {
